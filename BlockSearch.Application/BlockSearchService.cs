@@ -1,8 +1,11 @@
-﻿using BlockSearch.Application.SearcherClients;
+﻿using BlockSearch.Application.Exceptions;
+using BlockSearch.Application.SearcherClients;
 using BlockSearch.Common.Enums;
 using BlockSearch.Common.Logger;
 using BlockSearch.Common.Models;
 using System;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace BlockSearch.Application
 {
@@ -16,10 +19,43 @@ namespace BlockSearch.Application
             _logger = logger;
             _searcherClientFactory = searcherClientFactory;
         }
-        
-        public Block GetEthereumAddressTransactionsInBlock(CryptoType cryptoType, int blockNumber, string address)
+
+        public async Task<Block> GetAddressTransactionsInBlock(CryptoType? cryptoType, int? blockNumber, string address)
         {
-            throw new NotImplementedException();
+            if (!cryptoType.HasValue)
+                throw new InvalidInputException("Invalid input - missing cryptoType");
+
+            if (!blockNumber.HasValue)
+                throw new InvalidInputException("Invalid input - missing blockNumber");
+
+            try
+            {
+                var searchClient = _searcherClientFactory.GetSearcher(cryptoType.Value);
+                var block = await searchClient.GetBlockByBlockNumber(blockNumber.Value);
+                return FilterBlockTransactionsByAddress(block, address);
+            }
+            catch(Exception ex)
+            {
+                if(!ex.GetType().IsAssignableFrom(typeof(BlockNotFoundException)))
+                    _logger.LogError(ex.Message);
+                
+                throw;
+            }
+        }
+
+        private Block FilterBlockTransactionsByAddress(Block block, string address)
+        {
+            if (string.IsNullOrEmpty(address))
+                return block;
+
+            var filteredTransactions = block.Transactions.Where(transaction =>
+                    transaction.From == address
+                    || transaction.To == address).ToList();
+
+            block.Transactions = filteredTransactions;
+            block.Address = address;
+            
+            return block;
         }
     }
 }

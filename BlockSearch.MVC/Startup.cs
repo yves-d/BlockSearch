@@ -25,14 +25,14 @@ namespace BlockSearch.MVC
             services.AddControllersWithViews();
 
             services.AddSingleton(typeof(ILoggerAdapter<>), typeof(LoggerAdapter<>));
-            services.AddSingleton(typeof(ISearcherClientFactory), typeof(SearcherClientFactory));
+            services.AddTransient(typeof(ISearcherClientFactory), typeof(SearcherClientFactory));
             services.AddTransient(typeof(IBlockSearchService), typeof(BlockSearchService));
-            services.AddTransient(typeof(ISearcherClient), typeof(EthereumSearcherClient));
 
-            // grab httpclient options from appsettings
+            services.AddScoped<EthereumSearcherClient>()
+                .AddScoped<ISearcherClient, EthereumSearcherClient>(s => s.GetService<EthereumSearcherClient>());
+
+            // grab connection options from appsettings
             services.Configure<EthereumSearcherOptions>(Configuration.GetSection(nameof(EthereumSearcherClient)));
-            // initialise http client for ethereum searcher
-            services.AddHttpClient<ISearcherClient, EthereumSearcherClient>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
