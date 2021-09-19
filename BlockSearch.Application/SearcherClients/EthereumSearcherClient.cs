@@ -1,9 +1,7 @@
 ﻿using BlockSearch.Application.Exceptions;
+using BlockSearch.Application.ExternalClients;
 using BlockSearch.Common.Enums;
 using BlockSearch.Common.Models;
-using BlockSearch.Infrastructure.Options;
-using Microsoft.Extensions.Options;
-using Nethereum.Hex.HexTypes;
 using Nethereum.Web3;
 using System.Linq;
 using System.Threading.Tasks;
@@ -12,18 +10,11 @@ namespace BlockSearch.Application.SearcherClients
 {
     public class EthereumSearcherClient : ISearcherClient
     {
-        private string _baseUri;
-        private readonly string _infuraProjectId;
+        private IEthereumClient _ethereumClient;
 
-        private IWeb3 _ethClient => new Web3($"{_baseUri}{_infuraProjectId}");
-
-        public EthereumSearcherClient(IOptions<EthereumSearcherOptions> options)
+        public EthereumSearcherClient(IEthereumClient ethereumClient)
         {
-            if (string.IsNullOrEmpty(options.Value.BaseUri) || string.IsNullOrEmpty(options.Value.ProjectId))
-                throw new InitialisationFailureException($"Failed to initialise {nameof(EthereumSearcherClient)}");
-
-            _baseUri = options.Value.BaseUri;
-            _infuraProjectId = options.Value.ProjectId;
+            _ethereumClient = ethereumClient;
         }
         
         public async Task<Block> GetBlockByBlockNumber(int blockNumber)
@@ -34,8 +25,7 @@ namespace BlockSearch.Application.SearcherClients
 
         private async Task<Block> GetBlockWithTransactionsByNumberAsync(int blockNumber)
         {
-            var blockWithTransactions = await _ethClient.Eth.Blocks.GetBlockWithTransactionsByNumber.SendRequestAsync(
-                    new HexBigInteger(blockNumber));
+            var blockWithTransactions = await _ethereumClient.GetBlockWithTransactionsByNumberAsync(blockNumber);
 
             if (blockWithTransactions == null)
                 throw new BlockNotFoundException("Block with that number was not found.");

@@ -19,8 +19,4 @@
     <ProjectReference Include="..\..\BlockSearch.Application\BlockSearch.Application.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Helpers\" />
-  </ItemGroup>
-
 </Project>

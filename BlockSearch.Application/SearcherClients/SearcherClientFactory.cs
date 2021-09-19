@@ -1,4 +1,5 @@
-﻿using BlockSearch.Common.Enums;
+﻿using BlockSearch.Application.Exceptions;
+using BlockSearch.Common.Enums;
 using System;
 using System.Collections.Generic;
 
@@ -27,7 +28,7 @@ namespace BlockSearch.Application.SearcherClients
             if (searcherClients.ContainsKey(cryptoType))
                 return searcherClients[cryptoType]();
 
-            throw new NotImplementedException();
+            throw new ClientNotImplementedException($"Searcher Client not implemented for {cryptoType}");
         }
     }
 }

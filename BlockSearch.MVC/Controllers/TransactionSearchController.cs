@@ -29,7 +29,7 @@ namespace BlockSearch.MVC.Controllers
             return View(searchModel);
         }
 
-        // POST: TransactionSearchController/Create
+        // POST: TransactionSearchController
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Index(TransactionSearchModel model)

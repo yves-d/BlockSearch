@@ -1,4 +1,5 @@
 using BlockSearch.Application;
+using BlockSearch.Application.ExternalClients;
 using BlockSearch.Application.SearcherClients;
 using BlockSearch.Common.Logger;
 using BlockSearch.Infrastructure.Options;
@@ -27,12 +28,13 @@ namespace BlockSearch.MVC
             services.AddSingleton(typeof(ILoggerAdapter<>), typeof(LoggerAdapter<>));
             services.AddTransient(typeof(ISearcherClientFactory), typeof(SearcherClientFactory));
             services.AddTransient(typeof(IBlockSearchService), typeof(BlockSearchService));
+            services.AddTransient(typeof(IEthereumClient), typeof(NethereumClient));
 
             services.AddScoped<EthereumSearcherClient>()
                 .AddScoped<ISearcherClient, EthereumSearcherClient>(s => s.GetService<EthereumSearcherClient>());
 
             // grab connection options from appsettings
-            services.Configure<EthereumSearcherOptions>(Configuration.GetSection(nameof(EthereumSearcherClient)));
+            services.Configure<NethereumClientOptions>(Configuration.GetSection(nameof(NethereumClient)));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

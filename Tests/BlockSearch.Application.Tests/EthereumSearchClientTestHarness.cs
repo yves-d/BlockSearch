@@ -1,13 +1,9 @@
-﻿using BlockSearch.Application.SearcherClients;
-using BlockSearch.Application.Tests.Helpers;
-using BlockSearch.Common.Models;
-using BlockSearch.Infrastructure.Options;
-using Microsoft.Extensions.Options;
-using Newtonsoft.Json;
+﻿using BlockSearch.Application.ExternalClients;
+using BlockSearch.Application.SearcherClients;
+using Nethereum.Hex.HexTypes;
+using Nethereum.RPC.Eth.DTOs;
 using NSubstitute;
 using System.Collections.Generic;
-using System.Net;
-using System.Net.Http;
 using System.Threading.Tasks;
 
 namespace BlockSearch.Application.Tests
@@ -18,105 +14,70 @@ namespace BlockSearch.Application.Tests
         private ISearcherClient _searcherClient;
 
         // injectables
-        private HttpClient _httpClient;
-        private MockHttpMessageHandler _mockMessageHandler;
-        IOptions<EthereumSearcherOptions> _options;
+        IEthereumClient _ethereumClient;
 
         // test variables
-        private int? _blockNumber;
-        private string _httpClientJsonResponse;
-        private HttpStatusCode _httpClientStatusCodeResponse;
+        private int _blockNumber;
 
         public EthereumSearchClientTestHarness()
         {
-            InitialiseValidOptions();
+            _ethereumClient = Substitute.For<IEthereumClient>();
+            InitialiseValidStubBlock();
             _blockNumber = 0;
-            _httpClientJsonResponse = "";
-            _httpClientStatusCodeResponse = HttpStatusCode.OK;
         }
+
+        #region SETUP
+
+        private void InitialiseValidStubBlock()
+        {
+            BlockWithTransactions validBlock = new BlockWithTransactions()
+            {
+                BlockHash = "0x8acd2cfcad505faf70e96ef3db426e7f3a2fef4dad02d69be4766aa9ddffb426",
+                Number = new HexBigInteger("0xca3b19"),
+                Transactions = new List<Nethereum.RPC.Eth.DTOs.Transaction>()
+                {
+                    new Nethereum.RPC.Eth.DTOs.Transaction()
+                    {
+                        BlockHash = "0x8acd2cfcad505faf70e96ef3db426e7f3a2fef4dad02d69be4766aa9ddffb426",
+                        BlockNumber = new HexBigInteger("0xca3b19"),
+                        Gas = new HexBigInteger("0x3d090"),
+                        TransactionHash = "0x0",
+                        From = "0xea674fdde714fd979de3edf0f56aa9716b898ec8",
+                        To = "0xb172299614d6601f4a88a3e67498f5b37ed5ff45",
+                        Value = new HexBigInteger("0x2226c661547bb3")
+                    }
+                }.ToArray()
+            };
+
+            _ethereumClient.GetBlockWithTransactionsByNumberAsync(Arg.Any<int>()).Returns(validBlock);
+        }
+
+        #endregion
 
         #region ARRANGE
-
-        private void InitialiseValidOptions()
-        {
-            var ethereumSearcherOptions = new EthereumSearcherOptions()
-            {
-                BaseUri = "http://validbaseuri.com/",
-                ProjectId = "123"
-            };
-            _options = Substitute.For<IOptions<EthereumSearcherOptions>>();
-            _options.Value.Returns(ethereumSearcherOptions);
-        }
-
-        public EthereumSearchClientTestHarness WithNullBlockNumber()
-        {
-            _blockNumber = null;
-            return this;
-        }
 
         public EthereumSearchClientTestHarness WithBlockNotFound()
         {
             _blockNumber = 1;
-            _httpClientJsonResponse = JsonConvert.SerializeObject(GetEmptyBlock());
-            _httpClientStatusCodeResponse = HttpStatusCode.NotFound;
-
-            return this;
-        }
-
-        public EthereumSearchClientTestHarness WithBlockNumberContainingOneTransaction()
-        {
-            _blockNumber = 2;
-            _httpClientJsonResponse = JsonConvert.SerializeObject(GetBlockWithOneTransaction());
-            _httpClientStatusCodeResponse = HttpStatusCode.OK;
+            _ethereumClient.GetBlockWithTransactionsByNumberAsync(Arg.Any<int>()).Returns((BlockWithTransactions)null);
 
             return this;
         }
 
         public EthereumSearchClientTestHarness Build()
         {
-            _mockMessageHandler = new MockHttpMessageHandler(_httpClientJsonResponse, _httpClientStatusCodeResponse);
-            _httpClient = new HttpClient(_mockMessageHandler);
-            _searcherClient = new EthereumSearcherClient(_options);
+            _searcherClient = new EthereumSearcherClient(_ethereumClient);
 
             return this;
         }
-
-        #region HELPERS
-
-        private Block GetEmptyBlock()
-        {
-            return new Block();
-        }
-
-        private Block GetBlockWithOneTransaction()
-        {
-            return new Block()
-            { 
-                Transactions = new List<Transaction>()
-                {
-                    new Transaction()
-                    {
-                        BlockHash = "BlockHash",
-                        BlockNumber = _blockNumber.Value.ToString(),
-                        Gas = "0",
-                        Hash = "Hash",
-                        From = "FromAddress",
-                        To = "ToAddress",
-                        Value = (0.01m).ToString()
-                    }
-                }
-            };
-        }
-
-        #endregion
 
         #endregion
 
         #region ACT
 
-        public Task<Block> Execute_GetBlock()
+        public Task<Common.Models.Block> Execute_GetBlock()
         {
-            return _searcherClient.GetBlockByBlockNumber(_blockNumber.Value);
+            return _searcherClient.GetBlockByBlockNumber(_blockNumber);
         }
 
         #endregion
