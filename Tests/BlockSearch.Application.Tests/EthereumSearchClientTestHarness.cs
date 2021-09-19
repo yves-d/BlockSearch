@@ -76,7 +76,7 @@ namespace BlockSearch.Application.Tests
         {
             _mockMessageHandler = new MockHttpMessageHandler(_httpClientJsonResponse, _httpClientStatusCodeResponse);
             _httpClient = new HttpClient(_mockMessageHandler);
-            _searcherClient = new EthereumSearcherClient(_httpClient, _options);
+            _searcherClient = new EthereumSearcherClient(_options);
 
             return this;
         }
@@ -97,12 +97,12 @@ namespace BlockSearch.Application.Tests
                     new Transaction()
                     {
                         BlockHash = "BlockHash",
-                        BlockNumber = _blockNumber.Value,
-                        Gas = 0,
+                        BlockNumber = _blockNumber.Value.ToString(),
+                        Gas = "0",
                         Hash = "Hash",
                         From = "FromAddress",
                         To = "ToAddress",
-                        Value = 0.01m
+                        Value = (0.01m).ToString()
                     }
                 }
             };
@@ -116,7 +116,7 @@ namespace BlockSearch.Application.Tests
 
         public Task<Block> Execute_GetBlock()
         {
-            return _searcherClient.GetBlock(_blockNumber);
+            return _searcherClient.GetBlockByBlockNumber(_blockNumber.Value);
         }
 
         #endregion

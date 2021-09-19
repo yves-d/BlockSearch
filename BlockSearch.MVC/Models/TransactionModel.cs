@@ -1,6 +1,6 @@
-﻿namespace BlockSearch.Common.Models
+﻿namespace BlockSearch.MVC.Models
 {
-    public class Transaction
+    public class TransactionModel
     {
         public string BlockHash { get; set; }
         public string BlockNumber { get; set; }

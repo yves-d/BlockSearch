@@ -5,6 +5,6 @@ namespace BlockSearch.Application.SearcherClients
 {
     public interface ISearcherClient
     {
-        Task<Block> GetBlock(int? blockNumber);
+        Task<Block> GetBlockByBlockNumber(int blockNumber);
     }
 }

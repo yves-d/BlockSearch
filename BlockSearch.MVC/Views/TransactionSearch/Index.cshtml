@@ -1,0 +1,84 @@
+﻿@model TransactionSearchModel
+@{
+    string PageTitle = $"Transaction Search - {Model.Crypto.ToString()}";
+    ViewData["Title"] = PageTitle;
+}
+
+<div class="text-left">
+    <h1 class="display-4">@(PageTitle)</h1>
+</div>
+
+<div class="container">
+    @using (Html.BeginForm("Index", "TransactionSearch", FormMethod.Post))
+    {
+        @Html.AntiForgeryToken()
+        @Html.HiddenFor(m => m.Crypto)
+
+        <fieldset>
+            <div>
+                <div>
+                    <div class="alert alert-info" role="alert">
+                        <p>Use this tool to search for transactions within a block.</p>
+                        <p>If an address if provided, the transaction list can be filtered down to only show transactions where the address was a participant.</p>
+                    </div>
+                </div>
+                <div>
+                    @{
+                        if (!string.IsNullOrEmpty(Model.ErrorMessage))
+                        {
+                            <div class="alert alert-danger" role="alert">@(Model.ErrorMessage)</div>
+                        }
+                    }
+                </div>
+
+                <div class="mb-3">
+                    @Html.LabelFor(m => m.BlockNumber, new { @class = "form-label" })
+                    @Html.TextBoxFor(m => m.BlockNumber, new { @class = "form-control" })
+                </div>
+
+                <div class="mb-3">
+                    @Html.LabelFor(m => m.Address, new { @class = "form-label" })
+                    @Html.TextBoxFor(m => m.Address, new { @class = "form-control" })
+                </div>
+
+                <button type="submit" class="btn btn-default">Submit</button>
+            </div>
+        </fieldset>
+    }
+</div>
+
+<div class="container">
+    <table class="table">
+        <thead>
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">Block Hash</th>
+                <th scope="col">Block Number</th>
+                <th scope="col">Gas</th>
+                <th scope="col">Hash</th>
+                <th scope="col">From</th>
+                <th scope="col">To</th>
+                <th scope="col">Value</th>
+            </tr>
+        </thead>
+        <tbody>
+            @{
+                int rowCount = 1;
+                foreach(var transaction in Model.Transactions)
+                {
+                    <tr>
+                        <td scope="col">@(rowCount)</td>
+                        <td scope="col">@(transaction.BlockHash)</td>
+                        <td scope="col">@(transaction.BlockNumber)</td>
+                        <td scope="col">@(transaction.Gas)</td>
+                        <td scope="col">@(transaction.Hash)</td>
+                        <td scope="col">@(transaction.From)</td>
+                        <td scope="col">@(transaction.To)</td>
+                        <td scope="col">@(transaction.Value)</td>
+                    </tr>
+                    rowCount++;
+                }
+            }
+        </tbody>
+    </table>
+</div>
