@@ -34,6 +34,12 @@ namespace BlockSearch.MVC.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Index(TransactionSearchModel model)
         {
+            if (!ModelState.IsValid)
+            {
+                model.Crypto = CryptoType.Ethereum;
+                return View(model);
+            }
+
             try
             {
                 var block = await _blockSearchService.GetAddressTransactionsInBlock(model.Crypto, model.BlockNumber, model.Address);

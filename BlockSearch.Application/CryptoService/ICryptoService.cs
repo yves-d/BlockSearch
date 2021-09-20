@@ -1,9 +1,9 @@
 ﻿using BlockSearch.Common.Models;
 using System.Threading.Tasks;
 
-namespace BlockSearch.Application.SearcherClients
+namespace BlockSearch.Application.CryptoService
 {
-    public interface ISearcherClient
+    public interface ICryptoService
     {
         Task<Block> GetBlockByBlockNumber(int blockNumber);
     }

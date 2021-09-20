@@ -29,7 +29,7 @@ namespace BlockSearch.MVC.Tests
 
         public const string UNKNOWN_ERROR_MESSAGE = "An unknown error has occurred.";
         public const string BLOCK_NOT_FOUND_MESSAGE = "Block with that number was not found.";
-        public const string INVALID_INPUT_MESSAGE = "Missing input - blockNumber";
+        public const string INVALID_INPUT_MESSAGE = "Missing input - Block Number";
 
         public Block _block { get; private set; }
 
@@ -78,13 +78,13 @@ namespace BlockSearch.MVC.Tests
             return this;
         }
 
-        public TransactionSearchControllerTestHarness WithBlockSearchServiceThrowingClientNotImplementedException()
+        public TransactionSearchControllerTestHarness WithBlockSearchServiceThrowingServiceNotImplementedException()
         {
             _blockSearchService.When(service => service.GetAddressTransactionsInBlock(
                     Arg.Any<CryptoType>(),
                     Arg.Any<int?>(),
                     Arg.Any<string>()))
-                .Do(service => { throw new ClientNotImplementedException("Searcher Client not implemented - Bitcoin"); });
+                .Do(service => { throw new ServiceNotImplementedException("Crypto Service not implemented - Bitcoin"); });
 
             return this;
         }

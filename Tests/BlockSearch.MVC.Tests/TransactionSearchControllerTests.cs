@@ -71,11 +71,11 @@ namespace BlockSearch.MVC.Tests
         }
 
         [TestMethod]
-        public void When_BlockSearchService_Throws_ClientNotImplementedException_Then_TransactionSearchModel_Should_Contain_Uknown_Error_Message()
+        public void When_BlockSearchService_Throws_ServiceNotImplementedException_Then_TransactionSearchModel_Should_Contain_Uknown_Error_Message()
         {
             // arrange
             _testHarness = new TransactionSearchControllerTestHarness()
-                .WithBlockSearchServiceThrowingClientNotImplementedException()
+                .WithBlockSearchServiceThrowingServiceNotImplementedException()
                 .Build();
 
             // act

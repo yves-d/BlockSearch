@@ -6,13 +6,13 @@ using Nethereum.Web3;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace BlockSearch.Application.SearcherClients
+namespace BlockSearch.Application.CryptoService
 {
-    public class EthereumSearcherClient : ISearcherClient
+    public class EthereumService : ICryptoService
     {
         private IEthereumClient _ethereumClient;
 
-        public EthereumSearcherClient(IEthereumClient ethereumClient)
+        public EthereumService(IEthereumClient ethereumClient)
         {
             _ethereumClient = ethereumClient;
         }

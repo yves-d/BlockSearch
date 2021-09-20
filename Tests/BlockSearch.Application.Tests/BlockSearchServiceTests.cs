@@ -83,8 +83,9 @@ namespace BlockSearch.Application.Tests
                 .Build();
 
             // act & assert
-            Should.ThrowAsync<InvalidInputException>(() => _testHarness.Execute_GetAddressTransactionsInBlock());
-            _testHarness._logger.Received(0).LogError("Missing input - blockNumber");
+            Should.ThrowAsync<InvalidInputException>(() => _testHarness.Execute_GetAddressTransactionsInBlock())
+                .Result.Message.ShouldBe("Missing input - blockNumber");
+            _testHarness._logger.Received(0).LogError("Missing input - Block Number");
         }
 
         [TestMethod]
@@ -96,29 +97,17 @@ namespace BlockSearch.Application.Tests
                 .Build();
 
             // act & assert
-            Should.ThrowAsync<InvalidInputException>(() => _testHarness.Execute_GetAddressTransactionsInBlock());
-            _testHarness._logger.Received(0).LogError("Missing input - cryptoType");
+            Should.ThrowAsync<InvalidInputException>(() => _testHarness.Execute_GetAddressTransactionsInBlock())
+                .Result.Message.ShouldBe("Missing input - cryptoType");
+            _testHarness._logger.Received(0).LogError("Missing input - Crypto Type");
         }
 
         [TestMethod]
-        public void When_SearcherClientFactory_Throws_ClientNotImplementedException_GetAddressTransactionsInBlock_Should_Throw_And_Log()
+        public void When_CryptoService_Throws_BlockNotFoundException_GetAddressTransactionsInBlock_Should_Throw_And_Not_Log()
         {
             // arrange
             _testHarness = new BlockSearchServiceTestHarness()
-                .WithSearcherClientFactoryThrowingClientNotImplementedException()
-                .Build();
-
-            // act & assert
-            Should.ThrowAsync<ClientNotImplementedException>(() => _testHarness.Execute_GetAddressTransactionsInBlock());
-            _testHarness._logger.Received(1).LogError("Searcher Client not implemented - Bitcoin");
-        }
-
-        [TestMethod]
-        public void When_SearcherClientFactory_Throws_BlockNotFoundException_GetAddressTransactionsInBlock_Should_Throw_And_Not_Log()
-        {
-            // arrange
-            _testHarness = new BlockSearchServiceTestHarness()
-                .WithSearcherClientThrowingBlockNotFoundException()
+                .WithCryptoServiceThrowingBlockNotFoundException()
                 .Build();
 
             // act & assert
@@ -127,11 +116,24 @@ namespace BlockSearch.Application.Tests
         }
 
         [TestMethod]
-        public void When_SearcherClientFactory_Throws_InitialisationFailureException_GetAddressTransactionsInBlock_Should_Throw_And_Log()
+        public void When_CryptoServiceFactory_Throws_ClientNotImplementedException_GetAddressTransactionsInBlock_Should_Throw_And_Log()
         {
             // arrange
             _testHarness = new BlockSearchServiceTestHarness()
-                .WithSearcherClientFactoryThrowingInitialisationFailureException()
+                .WithCryptoServiceFactoryThrowingServiceNotImplementedException()
+                .Build();
+
+            // act & assert
+            Should.ThrowAsync<ServiceNotImplementedException>(() => _testHarness.Execute_GetAddressTransactionsInBlock());
+            _testHarness._logger.Received(1).LogError("Crypto Service not implemented - Bitcoin");
+        }
+
+        [TestMethod]
+        public void When_CryptoServiceFactory_Throws_InitialisationFailureException_GetAddressTransactionsInBlock_Should_Throw_And_Log()
+        {
+            // arrange
+            _testHarness = new BlockSearchServiceTestHarness()
+                .WithCryptoServiceFactoryThrowingInitialisationFailureException()
                 .Build();
 
             // act & assert
@@ -140,15 +142,15 @@ namespace BlockSearch.Application.Tests
         }
 
         [TestMethod]
-        public void When_SearcherClientFactory_Throws_General_Exception_GetAddressTransactionsInBlock_Should_Throw_And_Log()
+        public void When_CryptoServiceFactory_Throws_General_Exception_GetAddressTransactionsInBlock_Should_Throw_And_Log()
         {
             // arrange
             _testHarness = new BlockSearchServiceTestHarness()
-                .WithSearcherClientThrowingGeneralException()
+                .WithCryptoServiceThrowingGeneralException()
                 .Build();
 
             // act & assert
-            Should.ThrowAsync<ClientNotImplementedException>(() => _testHarness.Execute_GetAddressTransactionsInBlock());
+            Should.ThrowAsync<ServiceNotImplementedException>(() => _testHarness.Execute_GetAddressTransactionsInBlock());
             _testHarness._logger.Received(1).LogError("Unknown exception");
         }
     }

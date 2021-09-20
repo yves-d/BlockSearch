@@ -1,5 +1,5 @@
-﻿using BlockSearch.Application.ExternalClients;
-using BlockSearch.Application.SearcherClients;
+﻿using BlockSearch.Application.CryptoService;
+using BlockSearch.Application.ExternalClients;
 using Nethereum.Hex.HexTypes;
 using Nethereum.RPC.Eth.DTOs;
 using NSubstitute;
@@ -11,7 +11,7 @@ namespace BlockSearch.Application.Tests
     public class EthereumSearchClientTestHarness
     {
         // searcher client
-        private ISearcherClient _searcherClient;
+        private ICryptoService _cryptoService;
 
         // injectables
         IEthereumClient _ethereumClient;
@@ -66,7 +66,7 @@ namespace BlockSearch.Application.Tests
 
         public EthereumSearchClientTestHarness Build()
         {
-            _searcherClient = new EthereumSearcherClient(_ethereumClient);
+            _cryptoService = new EthereumService(_ethereumClient);
 
             return this;
         }
@@ -75,9 +75,9 @@ namespace BlockSearch.Application.Tests
 
         #region ACT
 
-        public Task<Common.Models.Block> Execute_GetBlock()
+        public Task<Common.Models.Block> Execute_GetBlockByBlockNumber()
         {
-            return _searcherClient.GetBlockByBlockNumber(_blockNumber);
+            return _cryptoService.GetBlockByBlockNumber(_blockNumber);
         }
 
         #endregion

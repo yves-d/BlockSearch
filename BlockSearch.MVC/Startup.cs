@@ -1,7 +1,7 @@
 using BlockSearch.Application;
+using BlockSearch.Application.CryptoService;
 using BlockSearch.Application.ExternalClients;
-using BlockSearch.Application.SearcherClients;
-using BlockSearch.Common.Logger;
+using BlockSearch.Infrastructure.Logger;
 using BlockSearch.Infrastructure.Options;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -26,12 +26,12 @@ namespace BlockSearch.MVC
             services.AddControllersWithViews();
 
             services.AddSingleton(typeof(ILoggerAdapter<>), typeof(LoggerAdapter<>));
-            services.AddTransient(typeof(ISearcherClientFactory), typeof(SearcherClientFactory));
+            services.AddTransient(typeof(ICryptoServiceFactory), typeof(CryptoServiceFactory));
             services.AddTransient(typeof(IBlockSearchService), typeof(BlockSearchService));
             services.AddTransient(typeof(IEthereumClient), typeof(NethereumClient));
 
-            services.AddScoped<EthereumSearcherClient>()
-                .AddScoped<ISearcherClient, EthereumSearcherClient>(s => s.GetService<EthereumSearcherClient>());
+            services.AddScoped<EthereumService>()
+                .AddScoped<ICryptoService, EthereumService>(s => s.GetService<EthereumService>());
 
             // grab connection options from appsettings
             services.Configure<NethereumClientOptions>(Configuration.GetSection(nameof(NethereumClient)));

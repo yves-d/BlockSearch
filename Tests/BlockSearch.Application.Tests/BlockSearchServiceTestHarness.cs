@@ -1,7 +1,7 @@
-﻿using BlockSearch.Application.Exceptions;
-using BlockSearch.Application.SearcherClients;
+﻿using BlockSearch.Application.CryptoService;
+using BlockSearch.Application.Exceptions;
 using BlockSearch.Common.Enums;
-using BlockSearch.Common.Logger;
+using BlockSearch.Infrastructure.Logger;
 using NSubstitute;
 using System;
 using System.Collections.Generic;
@@ -16,28 +16,28 @@ namespace BlockSearch.Application.Tests
 
         // injectables
         public ILoggerAdapter<IBlockSearchService> _logger { get; private set; }
-        private ISearcherClientFactory _searcherClientFactory;
+        private ICryptoServiceFactory _cryptoServiceFactory;
 
         // test variables
         private CryptoType? _cryptoType;
         private int? _blockNumber;
         private string _address;
-        private ISearcherClient _searcherClient;
+        private ICryptoService _cryptoService;
 
         public Common.Models.Block _block { get; private set; }
 
         public BlockSearchServiceTestHarness()
         {
             _logger = Substitute.For<ILoggerAdapter<IBlockSearchService>>();
-            _searcherClient = Substitute.For<ISearcherClient>();
-            _searcherClientFactory = Substitute.For<ISearcherClientFactory>();
+            _cryptoService = Substitute.For<ICryptoService>();
+            _cryptoServiceFactory = Substitute.For<ICryptoServiceFactory>();
             InitialiseValidTestVariables();
-            InitialiseValidBlockFromSearchClient();
+            InitialiseValidBlockFromSearchService();
         }
 
         #region SETUP
 
-        private void InitialiseValidBlockFromSearchClient()
+        private void InitialiseValidBlockFromSearchService()
         {
             _block = GetBlockWithOneTransaction();
         }
@@ -84,33 +84,33 @@ namespace BlockSearch.Application.Tests
             return this;
         }
 
-        public BlockSearchServiceTestHarness WithSearcherClientFactoryThrowingClientNotImplementedException()
+        public BlockSearchServiceTestHarness WithCryptoServiceFactoryThrowingServiceNotImplementedException()
         {
-            _searcherClientFactory.When(factory => factory.GetSearcher(Arg.Any<CryptoType>()))
-                .Do(factory => { throw new ClientNotImplementedException("Searcher Client not implemented - Bitcoin"); });
+            _cryptoServiceFactory.When(factory => factory.GetCryptoService(Arg.Any<CryptoType>()))
+                .Do(factory => { throw new ServiceNotImplementedException("Crypto Service not implemented - Bitcoin"); });
 
             return this;
         }
 
-        public BlockSearchServiceTestHarness WithSearcherClientFactoryThrowingInitialisationFailureException()
+        public BlockSearchServiceTestHarness WithCryptoServiceFactoryThrowingInitialisationFailureException()
         {
-            _searcherClientFactory.When(factory => factory.GetSearcher(Arg.Any<CryptoType>()))
+            _cryptoServiceFactory.When(factory => factory.GetCryptoService(Arg.Any<CryptoType>()))
                 .Do(factory => { throw new InitialisationFailureException("Failed to initialise NethereumClient"); });
 
             return this;
         }
 
-        public BlockSearchServiceTestHarness WithSearcherClientThrowingBlockNotFoundException()
+        public BlockSearchServiceTestHarness WithCryptoServiceThrowingBlockNotFoundException()
         {
-            _searcherClient.When(client => client.GetBlockByBlockNumber(Arg.Any<int>()))
+            _cryptoService.When(client => client.GetBlockByBlockNumber(Arg.Any<int>()))
                 .Do(client => { throw new BlockNotFoundException("Block with that number was not found."); });
 
             return this;
         }
 
-        public BlockSearchServiceTestHarness WithSearcherClientThrowingGeneralException()
+        public BlockSearchServiceTestHarness WithCryptoServiceThrowingGeneralException()
         {
-            _searcherClient.When(client => client.GetBlockByBlockNumber(Arg.Any<int>()))
+            _cryptoService.When(client => client.GetBlockByBlockNumber(Arg.Any<int>()))
                 .Do(client => { throw new Exception("Unknown exception"); });
 
             return this;
@@ -118,9 +118,9 @@ namespace BlockSearch.Application.Tests
 
         public BlockSearchServiceTestHarness Build()
         {
-            _searcherClient.GetBlockByBlockNumber(Arg.Any<int>()).Returns(_block);
-            _searcherClientFactory.GetSearcher(Arg.Any<CryptoType>()).Returns(_searcherClient);
-            _blockSearchService = new BlockSearchService(_logger, _searcherClientFactory);
+            _cryptoService.GetBlockByBlockNumber(Arg.Any<int>()).Returns(_block);
+            _cryptoServiceFactory.GetCryptoService(Arg.Any<CryptoType>()).Returns(_cryptoService);
+            _blockSearchService = new BlockSearchService(_logger, _cryptoServiceFactory);
             return this;
         }
 

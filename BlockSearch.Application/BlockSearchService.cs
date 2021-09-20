@@ -1,8 +1,8 @@
-﻿using BlockSearch.Application.Exceptions;
-using BlockSearch.Application.SearcherClients;
+﻿using BlockSearch.Application.CryptoService;
+using BlockSearch.Application.Exceptions;
 using BlockSearch.Common.Enums;
-using BlockSearch.Common.Logger;
 using BlockSearch.Common.Models;
+using BlockSearch.Infrastructure.Logger;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
@@ -12,12 +12,12 @@ namespace BlockSearch.Application
     public class BlockSearchService : IBlockSearchService
     {
         private readonly ILoggerAdapter<IBlockSearchService> _logger;
-        private readonly ISearcherClientFactory _searcherClientFactory;
+        private readonly ICryptoServiceFactory _cryptoServiceFactory;
 
-        public BlockSearchService(ILoggerAdapter<IBlockSearchService> logger, ISearcherClientFactory searcherClientFactory)
+        public BlockSearchService(ILoggerAdapter<IBlockSearchService> logger, ICryptoServiceFactory cryptoServiceFactory)
         {
             _logger = logger;
-            _searcherClientFactory = searcherClientFactory;
+            _cryptoServiceFactory = cryptoServiceFactory;
         }
 
         public async Task<Block> GetAddressTransactionsInBlock(CryptoType? cryptoType, int? blockNumber, string address)
@@ -25,8 +25,8 @@ namespace BlockSearch.Application
             try
             {
                 ValidateInput(cryptoType, blockNumber);
-                var searchClient = _searcherClientFactory.GetSearcher(cryptoType.Value);
-                var block = await searchClient.GetBlockByBlockNumber(blockNumber.Value);
+                var cryptoService = _cryptoServiceFactory.GetCryptoService(cryptoType.Value);
+                var block = await cryptoService.GetBlockByBlockNumber(blockNumber.Value);
                 return FilterBlockTransactionsByAddress(block, address);
             }
             catch(Exception ex)
@@ -41,10 +41,10 @@ namespace BlockSearch.Application
         private void ValidateInput(CryptoType? cryptoType, int? blockNumber)
         {
             if (!cryptoType.HasValue)
-                throw new InvalidInputException($"Missing input - {cryptoType}");
+                throw new InvalidInputException($"Missing input - cryptoType");
 
             if (!blockNumber.HasValue)
-                throw new InvalidInputException($"Missing input - {blockNumber}");
+                throw new InvalidInputException("Missing input - blockNumber");
         }
 
         private Block FilterBlockTransactionsByAddress(Block block, string address)

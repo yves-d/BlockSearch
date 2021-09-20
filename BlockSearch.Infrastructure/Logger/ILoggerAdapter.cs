@@ -1,4 +1,4 @@
-﻿namespace BlockSearch.Common.Logger
+﻿namespace BlockSearch.Infrastructure.Logger
 {
     public interface ILoggerAdapter<T>
     {

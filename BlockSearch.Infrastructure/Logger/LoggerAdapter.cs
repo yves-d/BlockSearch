@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
 
-namespace BlockSearch.Common.Logger
+namespace BlockSearch.Infrastructure.Logger
 {
     // I can't claim this as my own, but I found it very useful for testing
     // source: https://chrissainty.com/unit-testing-ilogger-in-aspnet-core/
