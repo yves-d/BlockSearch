@@ -42,7 +42,7 @@ If you wish to run the solution as a stand-alone docker container outside of Vis
 7. If you wish to create an image file to copy to another machine, type ``docker save -o blocksearch-image.tar blocksearch-image``, to create a *.tar file.
 
 
-### BLockSearch Solution
+### BlockSearch Solution
 
 The solution is divided into numerous projects, each dedicated to a particular concern.
 
