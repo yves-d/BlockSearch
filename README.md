@@ -22,7 +22,7 @@ To open the solution, select the ``BlockSearch.sln`` file in VisualStudio.
 ### Running Options
 Within Visual Studio, the solution can be debugged as a .NetCore app, with ``BlockSearch.MVC`` selected as the start-up project, or within a docker container. Simply toggle the desired option in the main menu bar within Visual Studio.
 
-Running the solution in VisualStudio will open a browser, which should land straight on to the ``/TransactionSearch/`` page. 
+Running the solution in VisualStudio will open a browser, which should land straight on to the ``/TransactionSearch/`` page. If not, a link to the Transaction Search page was added to the top navigation bar.
 
 #### Docker (Optional)
 If you wish to run the solution as a stand-alone docker container outside of Visual Studio, please follow these instructions:
@@ -102,7 +102,11 @@ Several assumptions were made in creating this solution.
 
 2. Minimal logging was implemented, as there was no specific requirement.
 
-3. There was no requirement excluding the use of third-party libraries to perform key parts of the exercise. The Nethereum Nuget package comes to mind, and warrants a special mention.
+3. There was no requirement that would exclude the use of third-party libraries to perform key parts of the exercise. The Nethereum Nuget package comes to mind, and warrants a special mention as it was particularly helpful.
+
+4. The front-end razor view was built as minimally as possible (with minimal consideration to presentation), as it was assumed the focus of the exercise was to demonstrate back-end code writing, structure, testing, and documentation.
+
+5. Where relevant, code sourced from other people's work was referenced accordingly.
 
 
 ## Production - Things to consider
