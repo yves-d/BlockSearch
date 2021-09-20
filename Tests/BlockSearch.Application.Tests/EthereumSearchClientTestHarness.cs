@@ -1,5 +1,5 @@
 ﻿using BlockSearch.Application.CryptoService;
-using BlockSearch.Application.ExternalClients;
+using BlockSearch.ExternalClients.CryptoClients;
 using Nethereum.Hex.HexTypes;
 using Nethereum.RPC.Eth.DTOs;
 using NSubstitute;

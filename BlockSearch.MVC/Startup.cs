@@ -1,6 +1,6 @@
 using BlockSearch.Application;
 using BlockSearch.Application.CryptoService;
-using BlockSearch.Application.ExternalClients;
+using BlockSearch.ExternalClients.CryptoClients;
 using BlockSearch.Infrastructure.Logger;
 using BlockSearch.Infrastructure.Options;
 using Microsoft.AspNetCore.Builder;

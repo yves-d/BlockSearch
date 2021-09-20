@@ -1,4 +1,4 @@
-using BlockSearch.Application.Exceptions;
+using BlockSearch.Common.Exceptions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NSubstitute;
 using Shouldly;

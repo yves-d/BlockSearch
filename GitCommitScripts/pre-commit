@@ -38,6 +38,21 @@ if [[ $current_branch = $protected_branch ]] ; then
         exit $rc
     fi
 
+    echo -e "${YELLOW}Running BlockSearch.ExternalClients.Tests unit tests...${NC}"
+    echo ""
+
+    # run the unit tests
+    dotnet test "./Tests/BlockSearch.ExternalClients.Tests/BlockSearch.ExternalClients.Tests.csproj"
+
+    # $? is a shell variable which stores the return code from what we just ran
+    rc=$?
+    if [[ $rc != 0 ]] ; then
+        # A non-zero return code means an error occurred, so tell the user and exit
+        echo -e "${RED}BlockSearch.ExternalClients Unit tests failed, please fix and push again${NC}"
+        echo ""
+        exit $rc
+    fi
+
     echo -e "${YELLOW}Running BlockSearch.MVC.Tests unit tests...${NC}"
     echo ""
 

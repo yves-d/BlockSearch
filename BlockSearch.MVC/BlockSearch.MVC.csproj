@@ -11,6 +11,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\BlockSearch.Application\BlockSearch.Application.csproj" />
+    <ProjectReference Include="..\BlockSearch.ExternalClients\BlockSearch.ExternalClients.csproj" />
     <ProjectReference Include="..\BlockSearch.Infrastructure\BlockSearch.Infrastructure.csproj" />
   </ItemGroup>
 

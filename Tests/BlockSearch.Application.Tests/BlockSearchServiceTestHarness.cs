@@ -1,6 +1,6 @@
 ﻿using BlockSearch.Application.CryptoService;
-using BlockSearch.Application.Exceptions;
 using BlockSearch.Common.Enums;
+using BlockSearch.Common.Exceptions;
 using BlockSearch.Infrastructure.Logger;
 using NSubstitute;
 using System;

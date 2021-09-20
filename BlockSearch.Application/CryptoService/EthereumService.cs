@@ -1,7 +1,7 @@
-﻿using BlockSearch.Application.Exceptions;
-using BlockSearch.Application.ExternalClients;
-using BlockSearch.Common.Enums;
+﻿using BlockSearch.Common.Enums;
+using BlockSearch.Common.Exceptions;
 using BlockSearch.Common.Models;
+using BlockSearch.ExternalClients.CryptoClients;
 using Nethereum.Web3;
 using System.Linq;
 using System.Threading.Tasks;

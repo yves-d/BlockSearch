@@ -10,6 +10,7 @@ COPY ["BlockSearch.MVC/BlockSearch.MVC.csproj", "BlockSearch.MVC/"]
 COPY ["BlockSearch.Application/BlockSearch.Application.csproj", "BlockSearch.Application/"]
 COPY ["BlockSearch.Common/BlockSearch.Common.csproj", "BlockSearch.Common/"]
 COPY ["BlockSearch.Infrastructure/BlockSearch.Infrastructure.csproj", "BlockSearch.Infrastructure/"]
+COPY ["BlockSearch.ExternalClients/BlockSearch.ExternalClients.csproj", "BlockSearch.ExternalClients/"]
 RUN dotnet restore "BlockSearch.MVC/BlockSearch.MVC.csproj"
 COPY . .
 WORKDIR "/src/BlockSearch.MVC"

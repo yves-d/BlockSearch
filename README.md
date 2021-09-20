@@ -31,7 +31,7 @@ If you wish to run the solution as a stand-alone docker container outside of Vis
 
 2. Open PowerShell and navigate to the solution's root directory (where the BlockSearch.sln file is located).
 
-3. Type ``docker build -t truepokemon-image -f TruePokemon.API\Dockerfile .`` and hit enter. 
+3. Type ``docker build -t blocksearch-image -f BlockSearch.MVC\Dockerfile .`` and hit enter. 
 
 4. Navigate to the BlockSearch.MVC folder (where the Dockerfile is located) by typing ``cd BlockSearch.MVC`` and hit enter.
 
@@ -54,51 +54,55 @@ The projects are:
 
 3. BlockSearch.Common
 
-4. BlockSearch.Infrastructure
+4. BlockSearch.ExternalClients
+
+5. BlockSearch.Infrastructure
 
 
 #### BlockSearch.MVC
-
 The BlockSearch.MVC project effectively handles the presentation layer, taking input from the user - in this case, via a (very) simple razor page.
 
 It was put together from the standard 'out-of-the-box' MVC solution, and the TransactionSearch page was added.
 
 The TransactionSearch page is a basic form that accepts a BlockNumber (integer) and an optional Ethereum Address to filter on.
 
-The existing page and controller are hard-coded to perform Ethereum searches, however with some tweaking (front and back-end) it could be extended to work with other similar crypto blockchains.
+The existing controller is hard-coded to perform Ethereum searches, however with some tweaking (front and back-end) it could be extended to work with other similar crypto blockchains.
 
 
 #### BlockSearch.Application
-
-The BlockSearch.Application project contains the solution's business logic, as well as the various internal services and external clients use to fetch block and transaction data.
+The BlockSearch.Application project exists as the core domain of the 'Block Search' business logic, as well as the various internal services used for processing.
 
 The main entry-point into the BlockSearch functionality is through the BlockSearchService. 
 
 Based on the Crypto type requested (currently only Ethereum), it uses a factory class to load up the appropriate crypto service to process the request.
 
-Using a factory class to call up specific Crypto Service implementations, allows the BlockSearchService to remain largely unchanged if a new Crypto Service was to be added with the same functionality.
+Using a factory class to call up specific Crypto Service implementations in this context is one means of promoting extensibility, allowing the BlockSearchService to remain largely unchanged, if a new Crypto Service was to be added with the same functionality.
 
 
 #### BlockSearch.Common
+The BlockSearch.Common project contains all the classes shared between the MVC and Application projects, being mostly domain models and exceptions.
 
-The BlockSearch.Common project contains all the classes shared between the MVC and Application projects, being mostly domain models.
+
+#### BlockSearch.ExternalClients
+The BlockSearch.ExternalClients project contains the clients dedicated to reaching to outside services to fetch block and transaction data. In the case of the current client that is implemented, it is a client dedicate do communicating with the Infura service, using Nethereum Nuget package. 
 
 
 #### BlockSearch.Infrastructure
-
-The BlockSearch.Infrastructure contains the Logger implementation, as well as an options class to dependency inject connection options into the external client that connects to the Infura Ethereum service.
+The BlockSearch.Infrastructure contains the Logger implementation, as well as an Options class to dependency inject connection options into the external client that connects to the Infura Ethereum service.
 
 
 ## Git Commits
-As a voluntary measure for sanity testing, and to keep the repository free of bugs, please copy the ``pre-commit`` file from the ``GitCommitScripts`` folder to the ``.git/hooks`` folder to trigger the Release build and unit tests to run, preventing erroneous code from being commited.
+As a voluntary measure for sanity testing, and to keep the repository free of bugs, please copy the ``pre-commit`` file from the ``GitCommitScripts`` folder to the ``.git/hooks`` folder. On each commit, this hook will trigger the Release build, and run unit tests, preventing erroneous code from being commited.
 
 
-## Assumptions
+## Assumptions & Notes
 Several assumptions were made in creating this solution.
 
 1. For the purposes of keeping this exercise simpler, authentication and authorization were assumed to not be required, therefore each request is assumed to be valid for the consumer.
 
 2. Minimal logging was implemented, as there was no specific requirement.
+
+3. There was no requirement excluding the use of third-party libraries to perform key parts of the exercise. The Nethereum Nuget package comes to mind, and warrants a special mention.
 
 
 ## Production - Things to consider

@@ -1,5 +1,5 @@
-﻿using BlockSearch.Application.Exceptions;
-using BlockSearch.Common.Enums;
+﻿using BlockSearch.Common.Enums;
+using BlockSearch.Common.Exceptions;
 using System;
 using System.Collections.Generic;
 
