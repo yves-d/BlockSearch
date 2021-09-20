@@ -24,6 +24,24 @@ Within Visual Studio, the solution can be debugged as a .NetCore app, with ``Blo
 
 Running the solution in VisualStudio will open a browser, which should land straight on to the ``/TransactionSearch/`` page. 
 
+#### Docker (Optional)
+If you wish to run the solution as a stand-alone docker container outside of Visual Studio, please follow these instructions:
+
+1. Make sure you have updated the ``appsettings.json`` file with your Infura Project ID, as mentioned previously.
+
+2. Open PowerShell and navigate to the solution's root directory (where the BlockSearch.sln file is located).
+
+3. Type ``docker build -t truepokemon-image -f TruePokemon.API\Dockerfile .`` and hit enter. 
+
+4. Navigate to the BlockSearch.MVC folder (where the Dockerfile is located) by typing ``cd BlockSearch.MVC`` and hit enter.
+
+5. Type ``docker run -it --rm -e "ASPNETCORE_ENVIRONMENT=Development" -p 58817:80 --name blocksearch-mvc blocksearch-image``, and hit enter. Note: You can replace the port mapping of ``58817:80`` with any of your choosing.
+
+6. The docker container should now be running with the solution. You should be able to visit the site by entering ``http://localhost:58817/TransactionSearch`` into your browser.
+
+7. If you wish to create an image file to copy to another machine, type ``docker save -o blocksearch-image.tar blocksearch-image``, to create a *.tar file.
+
+
 ### BLockSearch Solution
 
 The solution is divided into numerous projects, each dedicated to a particular concern.
