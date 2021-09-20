@@ -1,0 +1,61 @@
+#!/bin/sh
+
+# thanks to this git user for providing the base of this script
+# https://github.com/Redfern/dot-net-core-pre-push-checks/blob/master/pre-push
+
+if [[ $current_branch = $protected_branch ]] ; then
+    echo -e "${YELLOW}Running pre commit hook check...${NC}"
+
+    echo -e "${YELLOW}Trying to build BlockSearch Release package...${NC}"
+    
+    # Let's speed things up a little bit
+    DOTNET_CLI_TELEMETRY_OPTOUT=1
+    DOTNET_SKIP_FIRST_TIME_EXPERIENCE=1
+    
+    # build the project
+    dotnet build -c Release "./BlockSearch/BlockSearch.MVC.csproj"
+
+    # $? is a shell variable which stores the return code from what we just ran
+    rc=$?
+    if [[ $rc != 0 ]] ; then
+        echo -e "${RED}Failed to build the project, please fix this and push again${NC}"
+        echo ""
+        exit $rc
+    fi
+
+    echo -e "${YELLOW}Running BlockSearch.Application.Tests unit tests...${NC}"
+    echo ""
+
+    # run the unit tests
+    dotnet test "./Tests/BlockSearch.Application.Tests/BlockSearch.Application.Tests.csproj"
+
+    # $? is a shell variable which stores the return code from what we just ran
+    rc=$?
+    if [[ $rc != 0 ]] ; then
+        # A non-zero return code means an error occurred, so tell the user and exit
+        echo -e "${RED}BlockSearch.Application Unit tests failed, please fix and push again${NC}"
+        echo ""
+        exit $rc
+    fi
+
+    echo -e "${YELLOW}Running BlockSearch.MVC.Tests unit tests...${NC}"
+    echo ""
+
+    # run the unit tests
+    dotnet test "./Tests/BlockSearch.MVC.Tests/BlockSearch.MVC.Tests.csproj"
+
+    # $? is a shell variable which stores the return code from what we just ran
+    rc=$?
+    if [[ $rc != 0 ]] ; then
+        # A non-zero return code means an error occurred, so tell the user and exit
+        echo -e "${RED}BlockSearch.MVC Unit tests failed, please fix and push again${NC}"
+        echo ""
+        exit $rc
+    fi
+
+    # Everything went OK so we can exit with a zero
+    echo -e "${GREEN}Pre push check passed!${NC}"
+    echo ""
+fi
+
+exit 0
