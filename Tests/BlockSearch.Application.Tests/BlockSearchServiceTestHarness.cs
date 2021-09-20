@@ -1,7 +1,9 @@
-﻿using BlockSearch.Application.SearcherClients;
+﻿using BlockSearch.Application.Exceptions;
+using BlockSearch.Application.SearcherClients;
 using BlockSearch.Common.Enums;
 using BlockSearch.Common.Logger;
 using NSubstitute;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -13,7 +15,7 @@ namespace BlockSearch.Application.Tests
         private IBlockSearchService _blockSearchService;
 
         // injectables
-        private ILoggerAdapter<IBlockSearchService> _logger;
+        public ILoggerAdapter<IBlockSearchService> _logger { get; private set; }
         private ISearcherClientFactory _searcherClientFactory;
 
         // test variables
@@ -79,6 +81,38 @@ namespace BlockSearch.Application.Tests
         public BlockSearchServiceTestHarness WithSpecifiedAddressNotMatchingAnyTransactions()
         {
             _block = GetBlockWithFourTransactionsWithNoMatchingAddresses();
+            return this;
+        }
+
+        public BlockSearchServiceTestHarness WithSearcherClientFactoryThrowingClientNotImplementedException()
+        {
+            _searcherClientFactory.When(factory => factory.GetSearcher(Arg.Any<CryptoType>()))
+                .Do(factory => { throw new ClientNotImplementedException("Searcher Client not implemented - Bitcoin"); });
+
+            return this;
+        }
+
+        public BlockSearchServiceTestHarness WithSearcherClientFactoryThrowingInitialisationFailureException()
+        {
+            _searcherClientFactory.When(factory => factory.GetSearcher(Arg.Any<CryptoType>()))
+                .Do(factory => { throw new InitialisationFailureException("Failed to initialise NethereumClient"); });
+
+            return this;
+        }
+
+        public BlockSearchServiceTestHarness WithSearcherClientThrowingBlockNotFoundException()
+        {
+            _searcherClient.When(client => client.GetBlockByBlockNumber(Arg.Any<int>()))
+                .Do(client => { throw new BlockNotFoundException("Block with that number was not found."); });
+
+            return this;
+        }
+
+        public BlockSearchServiceTestHarness WithSearcherClientThrowingGeneralException()
+        {
+            _searcherClient.When(client => client.GetBlockByBlockNumber(Arg.Any<int>()))
+                .Do(client => { throw new Exception("Unknown exception"); });
+
             return this;
         }
 

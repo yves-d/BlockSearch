@@ -24,7 +24,7 @@ namespace BlockSearch.MVC.Controllers
         {
             var searchModel = new TransactionSearchModel()
             {
-                Crypto = CryptoType.Ethereum
+                Crypto = CryptoType.Ethereum // defaulting to Eth
             };
             return View(searchModel);
         }
@@ -41,8 +41,7 @@ namespace BlockSearch.MVC.Controllers
             }
             catch(Exception ex)
             {
-                if (ex.GetType().IsAssignableFrom(typeof(BlockNotFoundException))
-                    || ex.GetType().IsAssignableFrom(typeof(InvalidInputException)))
+                if (CanShowExceptionMessageToUser(ex))
                     return View(BuildErrorResponse(ex.Message));
                 
                 return View(BuildErrorResponse("An unknown error has occurred."));
@@ -76,6 +75,13 @@ namespace BlockSearch.MVC.Controllers
                 Crypto = CryptoType.Ethereum,
                 ErrorMessage = message
             };
+        }
+
+        private bool CanShowExceptionMessageToUser(Exception ex)
+        {
+            return
+                (ex is BlockNotFoundException)
+                || (ex is InvalidInputException);
         }
     }
 }

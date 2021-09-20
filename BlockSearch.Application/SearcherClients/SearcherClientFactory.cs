@@ -28,7 +28,7 @@ namespace BlockSearch.Application.SearcherClients
             if (searcherClients.ContainsKey(cryptoType))
                 return searcherClients[cryptoType]();
 
-            throw new ClientNotImplementedException($"Searcher Client not implemented for {cryptoType}");
+            throw new ClientNotImplementedException($"Searcher Client not implemented - {cryptoType}");
         }
     }
 }

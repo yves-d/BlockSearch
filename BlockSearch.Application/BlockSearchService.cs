@@ -22,25 +22,29 @@ namespace BlockSearch.Application
 
         public async Task<Block> GetAddressTransactionsInBlock(CryptoType? cryptoType, int? blockNumber, string address)
         {
-            if (!cryptoType.HasValue)
-                throw new InvalidInputException("Invalid input - missing cryptoType");
-
-            if (!blockNumber.HasValue)
-                throw new InvalidInputException("Invalid input - missing blockNumber");
-
             try
             {
+                ValidateInput(cryptoType, blockNumber);
                 var searchClient = _searcherClientFactory.GetSearcher(cryptoType.Value);
                 var block = await searchClient.GetBlockByBlockNumber(blockNumber.Value);
                 return FilterBlockTransactionsByAddress(block, address);
             }
             catch(Exception ex)
             {
-                if(!ex.GetType().IsAssignableFrom(typeof(BlockNotFoundException)))
+                if(ExceptionShouldBeLogged(ex))
                     _logger.LogError(ex.Message);
                 
                 throw;
             }
+        }
+
+        private void ValidateInput(CryptoType? cryptoType, int? blockNumber)
+        {
+            if (!cryptoType.HasValue)
+                throw new InvalidInputException($"Missing input - {cryptoType}");
+
+            if (!blockNumber.HasValue)
+                throw new InvalidInputException($"Missing input - {blockNumber}");
         }
 
         private Block FilterBlockTransactionsByAddress(Block block, string address)
@@ -56,6 +60,13 @@ namespace BlockSearch.Application
             block.Address = address;
             
             return block;
+        }
+
+        private bool ExceptionShouldBeLogged(Exception ex)
+        {
+            return
+                !(ex is BlockNotFoundException)
+                && !(ex is InvalidInputException);
         }
     }
 }
