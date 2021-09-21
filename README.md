@@ -42,7 +42,7 @@ If you wish to run the solution as a stand-alone docker container outside of Vis
 7. If you wish to create an image file to copy to another machine, type ``docker save -o blocksearch-image.tar blocksearch-image``, to create a *.tar file.
 
 
-### BlockSearch Solution
+## BlockSearch Solution
 
 The solution is divided into numerous projects, each dedicated to a particular concern.
 
@@ -59,7 +59,7 @@ The projects are:
 5. BlockSearch.Infrastructure
 
 
-#### BlockSearch.MVC
+### BlockSearch.MVC
 The BlockSearch.MVC project effectively handles the presentation layer, taking input from the user - in this case, via a (very) simple razor page.
 
 It was put together from the standard 'out-of-the-box' MVC solution, and the TransactionSearch page was added.
@@ -69,7 +69,7 @@ The TransactionSearch page is a basic form that accepts a BlockNumber (integer) 
 The existing controller is hard-coded to perform Ethereum searches, however with some tweaking (front and back-end) it could be extended to work with other similar crypto blockchains.
 
 
-#### BlockSearch.Application
+### BlockSearch.Application
 The BlockSearch.Application project exists as the core domain of the 'Block Search' business logic, as well as the various internal services used for processing.
 
 The main entry-point into the BlockSearch functionality is through the BlockSearchService. 
@@ -79,15 +79,15 @@ Based on the Crypto type requested (currently only Ethereum), it uses a factory 
 Using a factory class to call up specific Crypto Service implementations in this context is one means of promoting extensibility, allowing the BlockSearchService to remain largely unchanged, if a new Crypto Service was to be added with the same functionality.
 
 
-#### BlockSearch.Common
+### BlockSearch.Common
 The BlockSearch.Common project contains all the classes shared between the MVC and Application projects, being mostly domain models and exceptions.
 
 
-#### BlockSearch.ExternalClients
+### BlockSearch.ExternalClients
 The BlockSearch.ExternalClients project contains the clients dedicated to reaching to outside services to fetch block and transaction data. In the case of the current client that is implemented, it is a client dedicate do communicating with the Infura service, using Nethereum Nuget package. 
 
 
-#### BlockSearch.Infrastructure
+### BlockSearch.Infrastructure
 The BlockSearch.Infrastructure contains the Logger implementation, as well as an Options class to dependency inject connection options into the external client that connects to the Infura Ethereum service.
 
 
