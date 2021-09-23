@@ -1,4 +1,4 @@
-﻿using BlockSearch.Application.ExternalClients;
+﻿using BlockSearch.ExternalClients.CryptoClients;
 using BlockSearch.Infrastructure.Options;
 using Microsoft.Extensions.Options;
 using Nethereum.RPC.Eth.DTOs;
